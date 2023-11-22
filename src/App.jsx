@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import ForecastCards from './ForecastCards';
 import { getWeatherData, getForecastData } from './weatherApiHelpers';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 
 function App() {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
+  const [showForecast, setShowForecast] = useState(false); 
+  const [searchPerformed, setSearchPerformed] = useState(false); 
 
   useEffect(() => {
     if (city) {
@@ -19,31 +21,32 @@ function App() {
 
   const handleSearch = () => {
     if (!city.trim()) {
-     // alert('Por favor, ingrese la ciudad.');
       Swal.fire("Por favor, ingrese la ciudad.");
       return;
     }
-  
+
     getWeatherData(city)
       .then((data) => {
         if (data.cod && data.cod === '404') {
           setWeather(null);
           alert('Ciudad no encontrada. Por favor ingrese un nombre de ciudad válida.');
-          //Swal.fire("Ciudad no encontrada. Por favor ingrese un nombre de ciudad válida.");
-          // Recargo la Página
-           window.location.reload();
+          window.location.reload();
         } else {
           setWeather(data);
+          setShowForecast(false); 
+          setSearchPerformed(true);
         }
       })
       .catch((error) => {
         console.log(error);
         setWeather(null);
-        //alert('A ocurrido un error. Por favor intente más tarde.');
         Swal.fire("A ocurrido un error. Por favor intente más tarde.");
-        // Recargo la Página
-         window.location.reload();
+        window.location.reload();
       });
+  };
+
+  const toggleForecast = () => {
+    setShowForecast(!showForecast);
   };
 
   return (
@@ -69,29 +72,37 @@ function App() {
             <img
               src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`}
               alt="Weather Icon"
-              style={{ width: '100px', height: '100px' }} // Adjust the size here
+              style={{ width: '100px', height: '100px' }}
             />
           )}
         </div>
       )}
-      <hr style={styles.hr} />
-      <div style={styles.forecastContainer}>
-        {forecast && <ForecastCards forecastList={createForecastList(forecast.list)} />}
-      </div>
+      {searchPerformed && ( 
+        <button onClick={toggleForecast} style={styles.button}>
+          {showForecast ? 'Hide Forecast' : 'Show Forecast'}
+        </button>
+      )}
+      {showForecast && (
+        <div>
+          <hr style={styles.hr} />
+          <div style={styles.forecastContainer}>
+            {forecast && <ForecastCards forecastList={createForecastList(forecast.list)} />}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// Función para agrupar los pronósticos por día
+// Function to group forecasts by day
 const createForecastList = (forecastList) => {
   const groupedForecast = [];
   for (let i = 0; i < forecastList.length; i += 8) {
     groupedForecast.push(forecastList.slice(i, i + 8));
-    console.log(groupedForecast)
+    console.log(groupedForecast);
   }
   return groupedForecast;
 };
-
 
 const styles = {
   container: {
