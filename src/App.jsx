@@ -150,6 +150,4 @@ const styles = {
   },
 };
 
-// The rest of your code...
-
 export default App;
