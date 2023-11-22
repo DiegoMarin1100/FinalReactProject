@@ -1,0 +1,35 @@
+/* ForecastCards.css */
+
+.forecast-container {
+  margin-top: 20px;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+}
+
+.forecast-card {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  margin: 0 5px;
+  padding: 10px;
+}
+
+.inner {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid #8d8787; /* Add a border between records */
+}
+
+.inner:last-child {
+  border-bottom: none; /* Remove border for the last record in each card */
+}
+
+.inner h3 {
+  margin: 0;
+}
+
+.inner h4 {
+  margin: 5px 0;
+}
